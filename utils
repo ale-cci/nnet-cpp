@@ -1,0 +1,24 @@
+#ifndef __UTILS__
+#define __UTILS__
+
+#include <cmath>
+#include <cstdint>
+
+#define ffor(x,END) for(int x = 0; x < END; ++x)
+
+//#define spt(x) (char*) &x
+#define spt(x) reinterpret_cast<char *>(&x)
+
+inline float sigmoid(float x) {
+	return 1 / (1 + exp(-x));
+}
+
+inline float sigmoid_prime(float x) {
+	return exp(-x) / pow((1 + exp(-x)), 2);
+}
+
+inline float rand01() {
+	return  double(rand())/ RAND_MAX;
+}
+
+#endif // __UTILS__
