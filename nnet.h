@@ -8,7 +8,7 @@ private:
 	Layer output_layer;
 	Layer* hidden_layer = nullptr;
 
-	uint8_t nof_hidden_layers;
+	uint16_t nof_hidden_layers;
 	uint16_t nof_inputs;
 	uint16_t hidden_layers_size;
 	uint16_t nof_outputs;

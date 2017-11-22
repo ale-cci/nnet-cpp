@@ -42,7 +42,7 @@ float* NeuralNetwork::feed_forward(float* const inputs){
 
 
 float NeuralNetwork::train(float* const inputs, float* expected_outputs) {
-	float* error = new float[nof_outputs];
+	float error[nof_outputs];
 	float* output = feed_forward(inputs);
 	float extimation = 0;
 
@@ -50,14 +50,12 @@ float NeuralNetwork::train(float* const inputs, float* expected_outputs) {
 		error[i] = output[i]- expected_outputs[i];
 		extimation += abs(error[i]);
 	}
-	error = output_layer.train(hidden_layer[nof_hidden_layers-1].last_output(), error);
-
+	float* data = output_layer.train(hidden_layer[nof_hidden_layers-1].last_output(), error);
 	for (int i = nof_hidden_layers -1; i > 1; --i) {
-		error = hidden_layer[i].train(hidden_layer[i-1].last_output(), error);
+		data = hidden_layer[i].train(hidden_layer[i-1].last_output(), data);
 	}
-	hidden_layer[0].train(inputs, error);
+	hidden_layer[0].train(inputs, data);
 
-	delete[] error;
 	return extimation;
 }
 
@@ -71,13 +69,15 @@ ostream& operator<<(ostream& out, NeuralNetwork& net){
 
 void NeuralNetwork::save(const char* path){
 	ofstream out(path, ios::out | ios::binary);
-	
+	assert(out.is_open());
+
 	// Read Data from input
 	out.write(spt(nof_inputs), sizeof(nof_inputs));
 	out.write(spt(nof_outputs), sizeof(nof_outputs));
 	out.write(spt(nof_hidden_layers), sizeof(nof_hidden_layers));
 	out.write(spt(hidden_layers_size), sizeof(hidden_layers_size));
-
+	cout << "Hidden layers" << int(*spt(nof_hidden_layers)) << endl;
+	cout << "Writing " << int(nof_hidden_layers) << " -> " << path << endl;
 	//init(nof_inputs, nof_outputs, nof_hidden_layers, hidden_layers_size);
 
 	// Load layers data
@@ -87,17 +87,21 @@ void NeuralNetwork::save(const char* path){
 
 void NeuralNetwork::load(const char* path){
 	// Opening File
-	ifstream in(path, ios::out | ios::binary);
+	ifstream in(path, ios::in | ios::binary);
 	assert(in.is_open());
+
 	uint16_t nof_inputs, nof_outputs, nof_hidden_layers, hidden_layers_size;
 	
 	in.read(spt(nof_inputs), sizeof(nof_inputs));
 	in.read(spt(nof_outputs), sizeof(nof_outputs));
 	in.read(spt(nof_hidden_layers), sizeof(nof_hidden_layers));
 	in.read(spt(hidden_layers_size), sizeof(hidden_layers_size));
+	cout << "Hidden Layers: " << int(nof_hidden_layers) << endl;
 
-	cout << nof_hidden_layers << endl;
+	assert(nof_hidden_layers < 4 && "Input Error");
+
 	init(nof_inputs, nof_outputs, nof_hidden_layers, hidden_layers_size);
+	
 	ffor(i, nof_hidden_layers)
 		hidden_layer[i].load(in);
 }

@@ -4,7 +4,8 @@
 #include <iostream>
 #include <cassert>
 
-const static float LEARNING_RATE = 0.2;
+const static float LEARNING_RATE = 0.3;
+const static float MOMENTUM = 0.9;
 
 using namespace std;
 
@@ -24,20 +25,24 @@ float Neuron::feed_forward(float* inputs) {
 	ffor(i, nof_inputs){
 		sum += inputs[i] * weights[i];
 	}
-	return sigmoid(bias + sum);
+	return sigmoid(bias + sum); // sigmoid
 }
 
 float deri(float x){
 	return x*(1-x);
+}
+
+float tan_d(float x){
+	return 1 - x*x;
 }
 void Neuron::train(float* const inputs, float error, float*errors) {
 	float output = feed_forward(inputs);
 	//float error = (output - expected_value);
 
 	ffor(i, nof_inputs) {
-		errors[i]  += weights[i] * error * deri(output);
-		weights[i] -= inputs[i] * deri(output) * (error);
-		bias 	   -= deri(output)*(error);
+		errors[i]  += weights[i] * error * deri(output) * MOMENTUM;
+		weights[i] -= inputs[i] * deri(output) * (error) * LEARNING_RATE;
+		bias 	   -= deri(output)*(error) * LEARNING_RATE;
 	}
 }
 
@@ -53,13 +58,13 @@ ostream& operator<< (ostream& stream, Neuron& n){
 }
 
 void Neuron::save(ofstream& out){
-	out.write((char*)&bias, sizeof(&bias));
+	out.write(spt(bias), sizeof(bias));
 	ffor(i, nof_inputs)
-		out.write((char*)&weights[i], sizeof(weights[0]));
+		out.write(spt(weights[i]), sizeof(weights[0]));
 }
 
 void Neuron::load(ifstream& in){
-	in.read((char*)&bias, sizeof(&bias));
+	in.read(spt(bias), sizeof(bias));
 	ffor(i, nof_inputs)
-		in.read((char*)&weights[i], sizeof(weights[i]));
+		in.read(spt(weights[i]), sizeof(weights[i]));
 }
