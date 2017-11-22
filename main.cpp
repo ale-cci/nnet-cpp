@@ -21,16 +21,20 @@ int main(){
 	float error;
 	float inputs[NOF_INPUTS];
 	float outputs[NOF_OUTPUTS];
-	n.load(WORKING_FILE);
-	//n.init(NOF_INPUTS, NOF_OUTPUTS, 2, 10);
+	//n.load(WORKING_FILE);
+	n.init(NOF_INPUTS, NOF_OUTPUTS, 2, 10);
 	int cases[4] = {0, 1, 1 , 0};
+
+	ofstream outfile("plotdata.txt");
 	//cout << n;
-	
+	outfile << LEARNING_RATE << endl;
 	ffor(x, EPOQUES){
 		ffor(i, NOF_INPUTS)
 			inputs[i] = cases[(x+i)%4];
 		outputs[0] = int(inputs[0]) ^ int (inputs[1]) ;
 		error = n.train(inputs, outputs);
+		if (!(x % 100))
+			outfile << error << endl;
 		//cout << n;
 		//cout << "Error: " << pow(error, 2)*0.5 << endl;
 	}

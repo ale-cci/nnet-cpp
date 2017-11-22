@@ -3,9 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <cassert>
-
-const static float LEARNING_RATE = 0.3;
-const static float MOMENTUM = 0.9;
+#include <cstring>
 
 using namespace std;
 
@@ -15,7 +13,10 @@ Neuron::Neuron(){
 
 void Neuron::allocate(uint16_t nof_inputs) {
 	this->nof_inputs = nof_inputs;
+	berror = 0;
 	weights = new float[nof_inputs];
+	werrors = new float[nof_inputs];
+	memset(werrors, 0, sizeof(float)*nof_inputs);
 	ffor(i, nof_inputs) 
 		weights[i] = rand01();
 }
@@ -40,9 +41,12 @@ void Neuron::train(float* const inputs, float error, float*errors) {
 	//float error = (output - expected_value);
 
 	ffor(i, nof_inputs) {
-		errors[i]  += weights[i] * error * deri(output) * MOMENTUM;
-		weights[i] -= inputs[i] * deri(output) * (error) * LEARNING_RATE;
-		bias 	   -= deri(output)*(error) * LEARNING_RATE;
+		errors[i]  += weights[i] * error * deri(output);
+		werrors[i] = MOMENTUM * werrors[i] + (1 - MOMENTUM) * inputs[i] * deri(output) * (error);
+		berror = MOMENTUM*berror + (1 - MOMENTUM) *deri(output)*(error);
+		
+		weights[i] -= werrors[i] * LEARNING_RATE;
+		bias 	   -= berror* LEARNING_RATE;
 	}
 }
 

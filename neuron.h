@@ -4,11 +4,17 @@
 
 using namespace std;
 
+
+const static float LEARNING_RATE = 0.25;
+const static float MOMENTUM = 0.9;
+
 class Neuron{
 private:
 	float* weights = nullptr;
+	float* werrors = nullptr;
 	float bias = 0;
 	uint8_t nof_inputs;
+	float berror = 0;
 public:
 	Neuron();
 	~Neuron();
