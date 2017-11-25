@@ -1,2 +1,4 @@
 #./run
 #./compile.sh
+*.png
+PLOTS/plotdatas.txt
