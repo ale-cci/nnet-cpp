@@ -1,1 +1,0 @@
-#define ffor(x,END) for(unsigned int x = 0; x < END; ++x)

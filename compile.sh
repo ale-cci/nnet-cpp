@@ -1,2 +1,1 @@
-g++ main.cpp neuron.cpp layer.cpp nnet.cpp\
-	-o run
+g++ main.cpp ./HEADERS/layer.cpp ./HEADERS/nnet.cpp -o run

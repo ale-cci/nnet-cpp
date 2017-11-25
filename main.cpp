@@ -1,51 +1,42 @@
 #include <iostream>
-#include <cstring>
-#include "utils"
-#include "nnet.h"
-// paolo fornacciari (palazzina1)
-//#include "neuron.h"
-
-
-const static int NOF_INPUTS = 2;
-const static int NOF_OUTPUTS = 1;
-const static int EPOQUES = 100000; // 10^6
-
-const static char* WORKING_FILE = "xor.nnet";
+#include <fstream>
+#include "HEADERS/utils"
+#include "HEADERS/nnet"
 
 using namespace std;
 
-
+const static char* PLOT_FILE = "PLOTS/plotdata.txt";
+const static int NOF_INPUTS = 2;
+const static int NOF_OUTPUTS = 1;
+const static int EPOQUES = 5000;
+const static int checking = 4;
+const static bool WRITE_ON_FILE = true;
 
 int main(){
-	NeuralNetwork n;
-	float error;
-	float inputs[NOF_INPUTS];
-	float outputs[NOF_OUTPUTS];
-	//n.load(WORKING_FILE);
-	n.init(NOF_INPUTS, NOF_OUTPUTS, 2, 10);
-	int cases[4] = {0, 1, 1 , 0};
+	NeuralNetwork test(NOF_INPUTS, NOF_OUTPUTS, 2, 4, 2);
+	ofstream out(PLOT_FILE);
+	// training samples
+	float inputs[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+	float outputs[4][1] = {{0}, {1}, {1}, {0}};
 
-	ofstream outfile("plotdata.txt");
-	//cout << n;
-	outfile << LEARNING_RATE << endl;
-	ffor(x, EPOQUES){
-		ffor(i, NOF_INPUTS)
-			inputs[i] = cases[(x+i)%4];
-		outputs[0] = int(inputs[0]) ^ int (inputs[1]) ;
-		error = n.train(inputs, outputs);
-		if (!(x % 100))
-			outfile << error << endl;
-		//cout << n;
-		//cout << "Error: " << pow(error, 2)*0.5 << endl;
+	// Training Network
+	if (WRITE_ON_FILE)
+		out << LEARNING_RATE << endl << MOMENTUM << endl << checking << endl;
+	ffor(i, EPOQUES) {
+		float error = test.train(inputs[i%4], outputs[i%4]);
+		if (WRITE_ON_FILE)
+			out << error << endl;
+
 	}
-	
-	//cout << n << endl;
-	n.save(WORKING_FILE);
+
+	// Debug Inteface
+	float in[2];
 	while(1){
-		cout << "Insert vals: "; 
+		cout << "Insert outputs: " << endl;
 		ffor(i, NOF_INPUTS)
-			cin >> inputs[i];
-		cout << "Prediction: " << *(n.feed_forward(inputs)) << endl;
+			cin >> in[i];
+		cout << (*(test.feed_forward(in)) );
 	}
+	out.close();
 	return 0;
 }
