@@ -1,9 +1,11 @@
 #include <cstring>
 #include <cstdarg>
 #include <cmath>
+#include <fstream>
 #include "nnet"
 #include "utils"
 
+NeuralNetwork::NeuralNetwork(){}
 
 NeuralNetwork::NeuralNetwork(uint16_t inputs, uint16_t outputs, uint16_t hidden_layers, ...) {
 	va_list args;
@@ -23,10 +25,9 @@ NeuralNetwork::NeuralNetwork(uint16_t inputs, uint16_t outputs, uint16_t hidden_
 	}
 
 	l_output.init(last_size, outputs);
-	std::cout << l_output << std::endl;
 
 	// hidden layers + output layers
-	layer_input = new float*[hidden_layers+1];
+	//layer_input = new float*[hidden_layers+1];
 }
 
 NeuralNetwork::~NeuralNetwork() {
@@ -35,28 +36,60 @@ NeuralNetwork::~NeuralNetwork() {
 
 // Input processing
 float* NeuralNetwork::feed_forward(float* input) {
-	layer_input[0] = input;
-	ffor(i, _hidden_layers){
-		layer_input[i +1] = l_hidden[i].feed_forward(layer_input[i]);
-	}
 
-	return l_output.feed_forward(layer_input[_hidden_layers]);
+	ffor(i, _hidden_layers)
+		input = l_hidden[i].feed_forward(input);
+
+	return output = l_output.feed_forward(input);
 }
 
 
 float NeuralNetwork::train(float* input, float* expected_output) {
 	float error_extimation = 0;
-	memset(error, 0., sizeof(float) * _outputs);
-	output = feed_forward(input);
-
+	//memset(error, 0., sizeof(float) * _outputs);
+	feed_forward(input);
 	ffor(i, _outputs){
 		error[i] = output[i] - expected_output[i];
 		error_extimation += std::abs(error[i]);
 	}
 	
-	float* data = l_output.train(layer_input[_hidden_layers], error);
-	for(int i=_hidden_layers-1; i >= 0; --i){
-		data = l_hidden[i].train(layer_input[i], data);
-	}
+	// Backpropagating errors
+	float* data = l_output.train(l_hidden[_hidden_layers-1].get_output(), error);
+
+	for(int i=_hidden_layers-1; i > 0; --i)
+		data = l_hidden[i].train(l_hidden[i-1].get_output(), data);
+	l_hidden[0].train(input, data);
+
 	return error_extimation;
+}
+
+void NeuralNetwork::save(const char* path) const {
+	std::ofstream out(path, std::ios::out | std::ios::binary);
+	
+	// Writing constructor data
+	out.write(cstp(& _inputs), sizeof(_inputs));
+	out.write(cstp(& _outputs), sizeof(_outputs));
+	out.write(cstp(& _hidden_layers), sizeof(_hidden_layers));
+
+	// loading layers data
+	ffor(i, _hidden_layers)
+		l_hidden[i].save(out);
+	l_output.save(out);
+}
+
+void NeuralNetwork::load(const char* path){
+	std::ifstream in(path, std::ios::in |std::ios::binary);
+
+	in.read(stp(& _inputs), sizeof(_inputs));
+	in.read(stp(& _outputs), sizeof(_outputs));
+	in.read(stp(& _hidden_layers), sizeof(_hidden_layers));
+
+	// allocating data
+	l_hidden = new Layer[_hidden_layers];
+	error = new float[_outputs];
+
+	// loading layers data
+	ffor(i, _hidden_layers)
+		l_hidden[i].load(in);
+	l_output.load(in);
 }

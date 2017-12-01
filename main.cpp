@@ -2,33 +2,43 @@
 #include <fstream>
 #include "HEADERS/utils"
 #include "HEADERS/nnet"
+#include "HEADERS/settings.h"
 
 using namespace std;
 
-const static char* PLOT_FILE = "PLOTS/plotdata.txt";
 const static int NOF_INPUTS = 2;
 const static int NOF_OUTPUTS = 1;
-const static int EPOQUES = 5000;
+const static int EPOQUES = 1000;
 const static int checking = 4;
-const static bool WRITE_ON_FILE = true;
+
 
 int main(){
+	/*
 	NeuralNetwork test(NOF_INPUTS, NOF_OUTPUTS, 2, 4, 2);
+	/*/
+	NeuralNetwork test;
+	test.load("test.nnet");
+	//*/
+	
 	ofstream out(PLOT_FILE);
 	// training samples
-	float inputs[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
-	float outputs[4][1] = {{0}, {1}, {1}, {0}};
+	int test_cases = 4;
+	float inputs[test_cases][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+	float outputs[test_cases][1] = {{0}, {1}, {1}, {0}};
 
-	// Training Network
 	if (WRITE_ON_FILE)
 		out << LEARNING_RATE << endl << MOMENTUM << endl << checking << endl;
+	
+	// Training Network
 	ffor(i, EPOQUES) {
-		float error = test.train(inputs[i%4], outputs[i%4]);
-		if (WRITE_ON_FILE)
-			out << error << endl;
-
+		ffor(j, test_cases){
+			float error = test.train(inputs[j%4], outputs[j%4]);
+			if (WRITE_ON_FILE)
+				out << error << endl;
+		}
 	}
 
+	test.save("test.nnet");
 	// Debug Inteface
 	float in[2];
 	while(1){

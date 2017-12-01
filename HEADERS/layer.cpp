@@ -1,5 +1,6 @@
 #include <cstring>
 #include <cassert>
+#include <fstream>
 #include <cmath>
 #include "utils"
 #include "layer.h"
@@ -12,6 +13,15 @@ float sigmoid(float x) {
 float sigmoid_prime(float y) {
 	return y * (1 - y);
 }
+
+// coming soon activation funciton
+float tanh_x(float x){
+	return tanh(x);
+}
+float tanh_dy(float y){
+	return 1 - y*y;
+}
+
 
 // Initialize layer memory
 void Layer::init(const int nof_inputs, const int nof_neurons){
@@ -31,7 +41,7 @@ void Layer::init(const int nof_inputs, const int nof_neurons){
 			_weight[neuron][i] = rand1();
 
 		E_weight[neuron] = new float[_inputs];
-		memset(E_weight[neuron], 0, sizeof(float)*_inputs);
+		memset(E_weight[neuron], 0, _inputs);
 	}
 
 	// Initializing biases
@@ -57,6 +67,7 @@ Layer::~Layer(){
 	delete[] E_weight;
 	delete[] _weight;
 	delete[] _error;
+	delete[] _output;
 }
 
 // Change activation function
@@ -68,7 +79,6 @@ void Layer::set_activation(float (*activation)(float), float (*activation_dy)(fl
 // Input Processing
 float* Layer::feed_forward(float* input) {
 	memset(_output, 0, sizeof(float) * _neurons);
-
 	ffor(neuron, _neurons) {
 		ffor(i, _inputs)
 			_output[neuron] += _weight[neuron][i] * input[i];
@@ -76,6 +86,11 @@ float* Layer::feed_forward(float* input) {
 		_output[neuron] = theta(_output[neuron] + _bias[neuron]);
 	}
 
+	return _output;
+}
+
+// Get last layer output
+float* const Layer::get_output() const{
 	return _output;
 }
 
@@ -118,4 +133,46 @@ std::ostream& operator<<(std::ostream& stream, Layer& l) {
 		stream << std::endl;
 	}
 	return stream;
+}
+
+
+uint16_t Layer::nof_neurons() const{
+	return _neurons;
+}
+uint16_t Layer::nof_inputs() const{
+	return _inputs;
+}
+
+void Layer::save(std::ofstream& out) const{
+	out.write(cstp(& _inputs), sizeof(_inputs));
+	out.write(cstp(& _neurons), sizeof(_neurons));
+
+	ffor(i, _neurons)
+		out.write(cstp(_weight[i]), sizeof(float) * _inputs);
+	out.write(cstp(_bias), sizeof(float)*_neurons);
+}
+
+void Layer::load(std::ifstream& in){
+	in.read(stp(& _inputs), sizeof(_inputs));
+	in.read(stp(& _neurons), sizeof(_neurons));
+
+	_bias = new float[_neurons];
+	_weight = new float*[_neurons];
+	ffor(i, _neurons){
+		_weight[i] = new float[_inputs];
+		in.read(stp(_weight[i]), sizeof(float)*_inputs);
+	}
+	in.read(stp(_bias), sizeof(float)*_neurons);
+
+	// Init other memory
+	_error = new float[_inputs];
+	E_bias = new float[_neurons];
+	E_weight = new float*[_neurons];
+	_output = new float[_neurons];
+
+	ffor(i, _neurons){
+		E_weight[i] = new float[_inputs];
+		memset(E_weight[i], 0, _inputs);
+	}
+	memset(E_bias, 0, _neurons);
 }

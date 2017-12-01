@@ -15,9 +15,10 @@ private:
 	float* output = nullptr;
 
 	// used for backpropagation
-	float** layer_input = nullptr;
+	// float** layer_input = nullptr;
 public:
 	NeuralNetwork(uint16_t inputs, uint16_t outputs, uint16_t hidden_layers, ...);
+	NeuralNetwork();
 	~NeuralNetwork();
 
 	float train(float* inputs, float* expected_output);
@@ -26,5 +27,7 @@ public:
 	void save(const char* path) const;
 	void load(const char* path);
 };
+
+float train(NeuralNetwork& nnet, uint64_t epoques, uint64_t batch);
 
 #endif

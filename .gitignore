@@ -1,4 +1,8 @@
-#./run
-#./compile.sh
+# Ignore run
+run
+
+# Ignore Plots, plotdata and pretrained models
+
 *.png
-PLOTS/plotdatas.txt
+*.txt
+*.nnet
