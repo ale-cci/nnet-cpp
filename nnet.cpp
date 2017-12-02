@@ -2,12 +2,11 @@
 #include <cstdarg>
 #include <cmath>
 #include <fstream>
+#include "settings.h"
 #include "nnet"
 #include "utils"
 
-NeuralNetwork::NeuralNetwork(){}
-
-NeuralNetwork::NeuralNetwork(uint16_t inputs, uint16_t outputs, uint16_t hidden_layers, ...) {
+void NeuralNetwork::allocate(uint16_t inputs, uint16_t outputs, uint16_t hidden_layers, ...) {
 	va_list args;
 	va_start(args, hidden_layers);
 	_inputs = inputs;
@@ -25,9 +24,6 @@ NeuralNetwork::NeuralNetwork(uint16_t inputs, uint16_t outputs, uint16_t hidden_
 	}
 
 	l_output.init(last_size, outputs);
-
-	// hidden layers + output layers
-	//layer_input = new float*[hidden_layers+1];
 }
 
 NeuralNetwork::~NeuralNetwork() {
@@ -46,7 +42,7 @@ float* NeuralNetwork::feed_forward(float* input) {
 
 float NeuralNetwork::train(float* input, float* expected_output) {
 	float error_extimation = 0;
-	//memset(error, 0., sizeof(float) * _outputs);
+
 	feed_forward(input);
 	ffor(i, _outputs){
 		error[i] = output[i] - expected_output[i];

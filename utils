@@ -1,7 +1,8 @@
 #ifndef __UTILS__
 #define __UTILS__
 
-#define ffor(x,END) for(int x = 0; x < END; ++x)
+#define ffor(x, END) for(int x = 0; x < END; ++x)
+#define ufor(x, END) for(uint64_t x=0; x < END; ++x)
 
 #define rand1() (((double) rand() * 2) / RAND_MAX -1)
 
