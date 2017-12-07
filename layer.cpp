@@ -3,7 +3,7 @@
 #include <fstream>
 #include <cmath>
 #include "utils"
-#include "layer.h"
+#include "layer.hpp"
 
 
 float sigmoid(float x) {
@@ -34,11 +34,13 @@ void Layer::init(const int nof_inputs, const int nof_neurons){
 	// Initializing network weights
 	_weight = new float*[_neurons];
 	E_weight = new float*[_neurons];
+	
+	float bond = 1/sqrt(_inputs);
 
 	ffor(neuron, _neurons) {
 		_weight[neuron] = new float[_inputs];
 		ffor(i, _inputs)
-			_weight[neuron][i] = rand1();
+			_weight[neuron][i] = randTo(-bond, +bond);
 
 		E_weight[neuron] = new float[_inputs];
 		memset(E_weight[neuron], 0, _inputs);
@@ -47,7 +49,7 @@ void Layer::init(const int nof_inputs, const int nof_neurons){
 	// Initializing biases
 	_bias = new float[_neurons];
 	ffor(i, _neurons)
-		_bias[i] = rand1();
+		_bias[i] = randTo(-bond, +bond);
 
 	E_bias = new float[_neurons];
 	memset(E_bias, 0, sizeof(float)*_neurons);

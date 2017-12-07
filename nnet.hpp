@@ -1,6 +1,6 @@
 #ifndef __NNET__
 #define __NNET__
-#include "layer.h"
+#include "layer.hpp"
 
 class NeuralNetwork {
 private:

@@ -2,7 +2,7 @@
 #define __LAYER_H__
 #include <iostream>
 #include <cmath>
-#include "settings.h"
+#include "settings.hpp"
 
 float sigmoid(float);
 float sigmoid_prime(float);

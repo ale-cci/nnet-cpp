@@ -1,5 +1,5 @@
-#ifndef __SETTINGS_H__
-#define __SETTINGS_H__
+#ifndef __SETTINGS_HPP__
+#define __SETTINGS_HPP__
 
 // Const values for data plotting
 const static char* PLOT_FILE = "PLOTS/plotdata.txt";

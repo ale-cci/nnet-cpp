@@ -2,8 +2,8 @@
 #include <cstdarg>
 #include <cmath>
 #include <fstream>
-#include "settings.h"
-#include "nnet"
+#include "settings.hpp"
+#include "nnet.hpp"
 #include "utils"
 
 void NeuralNetwork::allocate(uint16_t inputs, uint16_t outputs, uint16_t hidden_layers, ...) {
