@@ -3,7 +3,7 @@
 #include "layer.hpp"
 
 class NeuralNetwork {
-private:
+protected:
 	// network constants
 	uint16_t _inputs = 0;
 	uint16_t _outputs = 0;
@@ -13,13 +13,14 @@ private:
 	Layer l_output;
 	float* error = nullptr;
 	float* output = nullptr;
-	
+
 public:
 	~NeuralNetwork();
 
 	void allocate(uint16_t inputs, uint16_t outputs, uint16_t hidden_layers, ...);
 
 	float train(float* inputs, float* expected_output);
+	void backpropagate(float* inputs, float* expected_output);
 	float* feed_forward(float* inputs);
 
 	void save(const char* path) const;

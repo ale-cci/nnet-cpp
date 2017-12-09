@@ -48,20 +48,24 @@ float NeuralNetwork::train(float* input, float* expected_output) {
 		error[i] = output[i] - expected_output[i];
 		error_extimation += std::abs(error[i]);
 	}
-	
+
 	// Backpropagating errors
+	backpropagate(input, error);
+
+	return error_extimation;
+}
+
+void NeuralNetwork::backpropagate(float* input, float* error) {
 	float* data = l_output.train(l_hidden[_hidden_layers-1].get_output(), error);
 
 	for(int i=_hidden_layers-1; i > 0; --i)
 		data = l_hidden[i].train(l_hidden[i-1].get_output(), data);
 	l_hidden[0].train(input, data);
-
-	return error_extimation;
 }
 
 void NeuralNetwork::save(const char* path) const {
 	std::ofstream out(path, std::ios::out | std::ios::binary);
-	
+
 	// Writing constructor data
 	out.write(cstp(& _inputs), sizeof(_inputs));
 	out.write(cstp(& _outputs), sizeof(_outputs));

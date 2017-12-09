@@ -1,5 +1,6 @@
 #ifndef __UTILS__
 #define __UTILS__
+#include <cstdlib>
 
 #define ffor(x, END) for(int x = 0; x < END; ++x)
 #define ufor(x, END) for(uint64_t x=0; x < END; ++x)
