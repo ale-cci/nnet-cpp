@@ -2,7 +2,7 @@
 #define __SETTINGS_HPP__
 
 // Const values for data plotting
-const static char* PLOT_FILE = "PLOTS/plotdata.txt";
+// const static char* PLOT_FILE = "PLOTS/plotdata.txt";
 const static bool WRITE_ON_FILE = false;
 
 // Learning Rate Constants
