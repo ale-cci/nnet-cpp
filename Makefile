@@ -15,12 +15,12 @@ clean:
 	rm -f *.o ${LIBNAME}
 
 uninstall:
-	sudo rm -f /usr/lib/${LIBNAME}
-	sudo rm -rf /usr/include/nnet-cpp
+	rm -f /usr/lib/${LIBNAME}
+	rm -rf /usr/include/nnet-cpp
 
 install: ${LIBNAME}
-	sudo cp ${LIBNAME} /usr/lib/${LIBNAME}
-	sudo mkdir /usr/include/nnet-cpp
-	sudo cp *.hpp /usr/include/nnet-cpp
-	sudo cp nnet.hpp /usr/include/nnet-cpp/nnet
+	cp ${LIBNAME} /usr/lib/${LIBNAME}
+	mkdir /usr/include/nnet-cpp
+	cp *.hpp /usr/include/nnet-cpp
+	cp nnet.hpp /usr/include/nnet-cpp/nnet
 
